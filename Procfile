@@ -1,1 +1,1 @@
-web: gunicorn prep_project.wsgi
+web: gunicorn prep_project.wsgi--log-file-
