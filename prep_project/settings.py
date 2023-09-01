@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-=8%go6c5d8h*)pvkqezv+sg@l*n3o+9=dx0xo9%sf(fxw$4kk_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'williamsaa.pythonanywhere.com']
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web-production-d7a3.up.railway.app']
 
@@ -71,7 +71,7 @@ ROOT_URLCONF = 'prep_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'prep_project', 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
