@@ -23,7 +23,7 @@ from accounts.views import login_user
 
 
 urlpatterns = [
-    path('login_user',views.login_user,{'template_name': 'authentication/login.html'}, name='login.html'),
+   path('login_user', views.login_user, name='login_user'),
     path('admin/', admin.site.urls),
     path('client/', include('prep_app.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
