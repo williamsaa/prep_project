@@ -22,7 +22,7 @@ from accounts.views import login_user
 
 
 urlpatterns = [
-    path('',login_user),
+    path('accounts/',login_user),
     path('admin/', admin.site.urls),
     path('client/', include('prep_app.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
