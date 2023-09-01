@@ -17,17 +17,18 @@ Including another URLconf
 # client_project/urls.py
 
 from django.contrib import admin
-from django.urls import path, include
+#from django.urls import path, include
 from accounts.views import login_user
+from django.contrib.auth import views as auth_views
+
 
 
 
 urlpatterns = [
-   path('login_user', views.login_user, name='login_user'),
-    path('admin/', admin.site.urls),
-    path('client/', include('prep_app.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('accounts.urls')),
-
+    url(r'^login/', auth_views.login, {'template_name': 'authentication/login.html'}, name='login.html'),
+    url(r'^client/', include('prep_app.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^accounts/', include('accounts.urls')),
+    url(r'^admin/', admin.site.urls),
 ]
 
