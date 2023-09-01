@@ -18,10 +18,8 @@ Including another URLconf
 
 from django.contrib import admin
 #from django.urls import path, include
-from accounts.views import login_user
+#from accounts.views import login_user
 from django.contrib.auth import views as auth_views
-
-
 
 
 urlpatterns = [
