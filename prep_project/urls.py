@@ -16,9 +16,11 @@ Including another URLconf
 """
 # client_project/urls.py
 
-from django.contrib import admin
+
 #from django.urls import path, include
 #from accounts.views import login_user
+from django.conf.urls import include, url
+from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 
