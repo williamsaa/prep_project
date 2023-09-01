@@ -21,8 +21,9 @@ from django.urls import path, include
 from accounts.views import login_user
 
 
+
 urlpatterns = [
-    path('',login_user),
+    path('login_user',views.login_user,name='login.html'),
     path('admin/', admin.site.urls),
     path('client/', include('prep_app.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
