@@ -27,6 +27,11 @@
   <title>{% block title %}{% endblock %}</title>
 </head>
 <style>
+
+
+.nav-pills > .active > a, .nav-pills > .active > a:hover {
+    background-color: red;
+}
   /* Style for the message box */
   .hover-message {
       position: relative;
@@ -57,7 +62,11 @@
       border: none !important;
       border-width:0!important;
   }
+  
+  
   </style>
+
+
     <div class="row">
       <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
           <div class="container-fluid">
@@ -82,20 +91,17 @@
                       </li>
 
                       <li class="nav-item">
-                        <a class="nav-link" >
-                            <button class="btn btn-primary" type="button">Reports</button>
+                        <a class="nav-link" href="{% url 'reports1' %}" >
+                           <button class="btn btn-primary" type="button">Reports</button>
                         </a>
                     </li>
                       <!-- Add more navigation items as needed -->
                   </ul>
                   <form class="d-flex">
-                    <div class="hover-message">
-  
-                      <input name="query" class="form-control me-2" type="text" placeholder="Search">
-                      <a href="{% url 'client_list' %}">
-                        <div class="message">Search by any part or combination of client names or docket #</div>
-                  </div>
-                    <button class="btn btn-primary">Search</button>
+                  
+                  <a class="navbar-brand nav-link active" href="{% url 'client_list' %}">
+                    <h4>Search for Client</h4>
+                </a>
                 </form>
 
               </div>
@@ -275,7 +281,7 @@
                     <h4 style="background-color:powderblue;">Demographics</h4>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                       <button class="nav-link " id="nav-address-tab" data-bs-toggle="tab" data-bs-target="#nav-address" type="button" role="tab" aria-controls="nav-address" aria-selected="true"><a href="#" onclick="openAddressList(event, {{ client.id }})">Addresses</a></button>
-                      <button class="nav-link" id="nav-nok-tab" data-bs-toggle="tab" data-bs-target="#nav-nok" type="button" role="tab" aria-controls="nav-nok" aria-selected="false">Next of Kin</button>
+                      <button class="nav-link" id="nav-nok-tab" data-bs-toggle="tab" data-bs-target="#nav-nok" type="button" role="tab" aria-controls="nav-nok" aria-selected="false"><a href="#" onclick="openEmergencyContactList(event, {{ client.id }})">Emergency Contacts</a></button>
                       <button class="nav-link" id="nav-risk-tab" data-bs-toggle="tab" data-bs-target="#nav-risk" type="button" role="tab" aria-controls="nav-risk" aria-selected="false"><a href="#" onclick="openRiskHistoryList(event, {{ client.id }})">Risk History</a></button>
                       <button class="nav-link" id="nav-social-tab" data-bs-toggle="tab" data-bs-target="#nav-social" type="button" role="tab" aria-controls="nav-soocial" aria-selected="false"><a href="#" onclick="openSocialList(event, {{ client.id }})">Social History</a></button>
 
@@ -289,7 +295,11 @@
                           
                       </div> 
                      </div>
-                    <div class="tab-pane fade" id="nav-nok" role="tabpanel" aria-labelledby="nav-nok-tab"><div id="demo-nok">demo .bbb..</div></div>
+                    <div class="tab-pane fade" id="nav-nok" role="tabpanel" aria-labelledby="nav-nok-tab">
+                        <div id="demo-nok">
+                          <div id="nok-list-container">
+                          </div>
+                        </div></div>
                     <div class="tab-pane fade" id="nav-risk" role="tabpanel" aria-labelledby="nav-risk-tab">
                         <div id="demo-risk">
                           <div id="risk-list-container">
@@ -310,9 +320,9 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                       <button class="nav-link" id="nav-viralload-tab" data-bs-toggle="tab" data-bs-target="#nav-viralload" type="button" role="tab" aria-controls="nav-viralload" aria-selected="false"><a href="#" onclick="openViralloadList(event, {{ client.id }})">Viral Load</a></button>
                       <button class="nav-link " id="nav-sti-tab" data-bs-toggle="tab" data-bs-target="#nav-sti" type="button" role="tab" aria-controls="nav-sti" aria-selected="true"><a href="#" onclick="openSTIList(event, {{ client.id }})">STI</a></button>
-                      <button class="nav-link " id="nav-liver-tab" data-bs-toggle="tab" data-bs-target="#nav-liver" type="button" role="tab" aria-controls="nav-liver" aria-selected="true"><a href="#" onclick="openLiverList(event, {{ client.id }})">Liver/Kidney</a></button>
+                      <button class="nav-link " id="nav-liverkidney-tab" data-bs-toggle="tab" data-bs-target="#nav-liverkidney" type="button" role="tab" aria-controls="nav-liverkidney" aria-selected="true"><a href="#" onclick="openLiverKidneyList(event, {{ client.id }})">Liver/Kidney</a></button>
 
-                      <button class="nav-link" id="nav-othertests-tab" data-bs-toggle="tab" data-bs-target="#nav-othertests" type="button" role="tab" aria-controls="nav-othertests" aria-selected="false"><a href="#" onclick="openOtherTestsList(event, {{ client.id }})">Other Tests</a></button>
+                      <!-- <button class="nav-link" id="nav-othertests-tab" data-bs-toggle="tab" data-bs-target="#nav-othertests" type="button" role="tab" aria-controls="nav-othertests" aria-selected="false"><a href="#" onclick="openOtherTestsList(event, {{ client.id }})">Other Tests</a></button> -->
                     </div>
                   </nav>
                   <div class="tab-content" id="nav-tabContent">
@@ -330,11 +340,19 @@
                       </div>
 
                       <div class="tab-pane fade" id="nav-othertests" role="tabpanel" aria-labelledby="nav-othertests-tab">
-                        <div id="lab-othertests">.demo other lab..
+                        <div id="lab-othertests">
                           <div id="otherlab-list-container">
                           </div>
                       </div>
                     </div>
+
+                    <div class="tab-pane fade" id="nav-liverkidney" role="tabpanel" aria-labelledby="nav-liverkidney-tab">
+                      <div id="lab-liverkidney">
+                        <div id="liverkidney-list-container">
+                        </div>
+                    </div>
+                  </div>
+
                   </div>
 
                   <nav id="medications">
@@ -342,7 +360,7 @@
 
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                       <button class="nav-link " id="nav-arv-tab" data-bs-toggle="tab" data-bs-target="#nav-arv" type="button" role="tab" aria-controls="nav-arv" aria-selected="true"><a href="#" onclick="openARVMedicationList(event, {{ client.id }})">PrEP</a></button>
-                      <button class="nav-link" id="nav-othermeds-tab" data-bs-toggle="tab" data-bs-target="#nav-othermeds" type="button" role="tab" aria-controls="nav-othermeds" aria-selected="false">Other meds</button>
+                      <button class="nav-link" id="nav-othermeds-tab" data-bs-toggle="tab" data-bs-target="#nav-othermeds" type="button" role="tab" aria-controls="nav-othermeds" aria-selected="false"></button>
                     </div>
                   </nav>
                   <div class="tab-content" id="nav-tabContent">
@@ -352,7 +370,7 @@
                         </div>
 
                     </div></div>
-                    <div class="tab-pane fade" id="nav-othermeds" role="tabpanel" aria-labelledby="nav-othermeds-tab"><div id="med-othermeds">meds .other..</div></div>
+                    <div class="tab-pane fade" id="nav-othermeds" role="tabpanel" aria-labelledby="nav-othermeds-tab"><div id="med-othermeds"></div></div>
                   </div>
           </body>
       
@@ -671,5 +689,38 @@ function openAddressList(event, clientId) {
     });
   }
   </script> 
+
+
+<script>
+  function openLiverKidneyList(event, clientId) {
+    event.preventDefault(); // Prevent the default link behavior
+  
+    // AJAX request to fetch the vl list content
+    $.ajax({  
+      url: "/client/liverkidney_list/" + clientId + "/",
+      success: function(data) {
+        // Update the content of a specific section with the fetched data
+        $("#liverkidney-list-container").html(data);
+      }
+    });
+  }
+  </script> 
+
+
+<script>
+  function openEmergencyContactList(event, clientId) {
+    event.preventDefault(); // Prevent the default link behavior
+  
+    // AJAX request to fetch the vl list content
+    $.ajax({  
+      url: "/client/emergencycontact_list/" + clientId + "/",
+      success: function(data) {
+        // Update the content of a specific section with the fetched data
+        $("#nok-list-container").html(data);
+      }
+    });
+  }
+  </script> 
+
 
 </html>

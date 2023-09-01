@@ -34,44 +34,38 @@
 <!--bb-->
 
 
-
-
 <!--aa-->
 <div class="col-md-4">  <button onclick="popup2({{ client.id }})">Add New</button>  </div>
 <ul>
   <b><div class="row">
-    <div class="col-md-2"> Status date </div>
-    <div class="col-md-3">   Prep Status</div>
-    <div class="col-md-2">   Facility</div>
-    <div class="col-md-5">  </div>
+    <div class="col-md-2"> Date of test </div>
+    <div class="col-md-2"> Test name</div>
+    <div class="col-md-3"> Test results</div>
+    <div class="col-md-3"> Facility</div>
+    <div class="col-md-2">  </div>
   </div> </b>
 <hr>
-{% for ps in prepstatus %}
+{% for d in liverkidney %}
 <div class="row">
-    <div class="col-md-2">  {{ ps.status_date  }}</div>
-    <div class="col-md-2">  {{ ps.prepstatus  }}</div>
-    <div class="col-md-2">  {{ ps.facility.name  }}</div>
-
-    <div class="col-md-2"> <button onclick="popup({{ ps.id }})">Edit</button>  </div>
-    <div class="col-md-3">  </div>
+    <div class="col-md-2">  {{ d.test_date  }}</div>
+    <div class="col-md-2">  {{ d.test_name  }}</div>
+    <div class="col-md-3">  {{ d.test_results  }}</div>
+    <div class="col-md-3">  {{ d.facility.name  }}</div>
+    <div class="col-md-2"> <button onclick="popup({{ d.id }})">Edit</button>  </div>
+   
   </div> 
   <hr>
 {% empty %}
-<div class="row">
-  <div class="col-md-6">
-    <p style="font-size:12px; "> No data found - Click <b>'Add New'</b> to create new record </p>
-  </div>
-  <div class="col-md-6"></div>
-</div>
+<p style="font-size:12px; "> No data found - Click <b>'Add New'</b> to create new record </p>
 {% endfor %}
 </ul>
 
 {% endblock %}
 
 <script>
-  function popup(psid) {
+  function popup(did) {
   var windowFeatures = 'height=600,width=700,left=400,top=100,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,directories=no,status=no';
-  var url = "{% url 'edit_prepstatus' 0 %}".replace("0", psid);
+  var url = "{% url 'edit_liverkidney' 0 %}".replace("0", did);
   var newWindow = window.open(url, 'popUpWindow', windowFeatures);
 
   newWindow.addEventListener('load', function() {
@@ -79,11 +73,11 @@
 })};
 </script>
 
-  
+
 <script>
   function popup2(client_id) {
   var windowFeatures = 'height=600,width=700,left=400,top=100,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,directories=no,status=no';
-  var url = "{% url 'create_prepstatus' client_id %}";
+  var url = "{% url 'create_liverkidney' client_id %}";
   var newWindow = window.open(url, 'popUpWindow', windowFeatures);
 
   newWindow.addEventListener('load', function() {

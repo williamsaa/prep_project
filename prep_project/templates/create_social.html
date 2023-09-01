@@ -18,12 +18,10 @@
   {{ form|crispy}}
   {{ form.your_date_field.errors }}
 
-  <div class="row"> 
-    <div class="col-md-4">   </div>
-<div class="col-md-2">    <button type="submit" class="btn btn-primary" style="font-size: 20px;">Save</button> </div>
-<div class="col-md-2">  <button class="btn btn-info" style="font-size: 20px;"><a href="{% url 'close_window'  %}">Cancel</a></button>  </div>
-<div class="col-md-4">   </div> 
-</div>
+  <button type="submit" class="btn btn-primary" style="font-size: 20px;">Save</button> 
+  <button class="btn btn-info" style="font-size: 20px;"><a href="{% url 'close_window'  %}">Cancel</a></button>  
+  
+  
  
  </form>
 

@@ -29,66 +29,71 @@
     margin-top: 10px;
   }
   </style>
+ <style>
+  .row {
+    margin-bottom: 5px; /* Adjust the value as needed */
+    margin-top: 5px; /* Adjust the value as needed */
+  }
+
+  
+</style>
 </head>
 {% block content %}
 <!--bb-->
 
 
-
-
 <!--aa-->
 <div class="col-md-4">  <button onclick="popup2({{ client.id }})">Add New</button>  </div>
 <ul>
-  <b><div class="row">
-    <div class="col-md-2"> Status date </div>
-    <div class="col-md-3">   Prep Status</div>
-    <div class="col-md-2">   Facility</div>
-    <div class="col-md-5">  </div>
+  <b><div class="row h6">
+    <div class="col-md-2"> LastName </div>
+    <div class="col-md-2"> FirstName </div>
+    <div class="col-md-2"> Relationship </div>
+    <div class="col-md-3"> StreetName</div>
+    <div class="col-md-1"> Tele1 </div>
+    <div class="col-md-1"> Tele2 </div>
+    <div class="col-md-1">  </div>
   </div> </b>
 <hr>
-{% for ps in prepstatus %}
-<div class="row">
-    <div class="col-md-2">  {{ ps.status_date  }}</div>
-    <div class="col-md-2">  {{ ps.prepstatus  }}</div>
-    <div class="col-md-2">  {{ ps.facility.name  }}</div>
-
-    <div class="col-md-2"> <button onclick="popup({{ ps.id }})">Edit</button>  </div>
-    <div class="col-md-3">  </div>
+{% for ec in emergencycontact %}
+<div class="row h6">
+    <div class="col-md-2">  {{ ec.last_name }}</div>
+    <div class="col-md-2">  {{ ec.first_name }}</div>
+    <div class="col-md-2">  {{ ec.relationship_to_patient }}</div>
+    <div class="col-md-3">  {{ ec.street_name }}</div>
+    <div class="col-md-1">  {{ ec.telephone_cell }}</div>
+    <div class="col-md-1">  {{ ec.telephone_home  }}</div>
+    <div class="col-md-1"> <button onclick="popup({{ ec.id }})">Edit</button>  </div>
+    
   </div> 
   <hr>
 {% empty %}
-<div class="row">
-  <div class="col-md-6">
-    <p style="font-size:12px; "> No data found - Click <b>'Add New'</b> to create new record </p>
-  </div>
-  <div class="col-md-6"></div>
-</div>
+<p style="font-size:12px; "> No data found - Click <b>'Add New'</b> to create new record </p>
 {% endfor %}
 </ul>
 
 {% endblock %}
 
 <script>
-  function popup(psid) {
+  function popup(emergencycontactid) {
   var windowFeatures = 'height=600,width=700,left=400,top=100,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,directories=no,status=no';
-  var url = "{% url 'edit_prepstatus' 0 %}".replace("0", psid);
+  var url = "{% url 'edit_emergencycontact' 0 %}".replace("0", emergencycontactid);
   var newWindow = window.open(url, 'popUpWindow', windowFeatures);
 
   newWindow.addEventListener('load', function() {
     newWindow.document.body.style.backgroundColor = 'gray'; // Change the background color to red
 })};
-</script>
+  </script>
 
   
 <script>
-  function popup2(client_id) {
+  function popup2(ClientId) {
   var windowFeatures = 'height=600,width=700,left=400,top=100,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,directories=no,status=no';
-  var url = "{% url 'create_prepstatus' client_id %}";
+  var url = "{% url 'create_emergencycontact' client_id %}";
   var newWindow = window.open(url, 'popUpWindow', windowFeatures);
 
   newWindow.addEventListener('load', function() {
     newWindow.document.body.style.backgroundColor = 'gray'; // Change the background color to red
 })};
-</script>
-  
+  </script>
   

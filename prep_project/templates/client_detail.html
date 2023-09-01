@@ -17,7 +17,7 @@
     <a href="{% url 'edit_address' address.id %}">(Edit)</a>
   </li>
   {% empty %}
-  <li>No addresses found.</li>
+  <p style="font-size:12px; "> No data found - Click <b>'Add New'</b> to create new record </p>
   {% endfor %}
 </ul>
 <!-- <a href="{% url 'create_address' client_id=client.id %}">Add Address</a>   -->

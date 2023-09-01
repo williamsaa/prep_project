@@ -88,14 +88,11 @@
                       <!-- Add more navigation items as needed -->
                   </ul>
                   <form class="d-flex">
-                    <div class="hover-message">
-  
-                      <input name="query" class="form-control me-2" type="text" placeholder="Search for Client">
-                     
-                        <div class="message">Search by any part or combination of client names or docket #</div>
-                  </div>
-                  <a href="{% url 'client_list' %}"> <button class="btn btn-primary">Search</button>
-                </form>
+                  
+                    <a class="navbar-brand nav-link active" href="{% url 'client_list' %}">
+                      <h4>Search for Client</h4>
+                  </a>
+                  </form>
                 
               </div>
           </div>
