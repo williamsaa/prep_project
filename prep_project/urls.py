@@ -29,3 +29,5 @@ urlpatterns = [
     path('client/', include('prep_app.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
+]
+    
