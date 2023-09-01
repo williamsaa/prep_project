@@ -1,7 +1,7 @@
 # client/forms.py
 
 from django import forms
-from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests
+from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, UserFacilityAssignment, EmergencyContact
 #from crispy_forms.layout import Layout, Fieldset
 from crispy_forms.helper import FormHelper
 from django.utils.encoding import force_str
@@ -10,14 +10,28 @@ from crispy_forms.layout import Layout, Fieldset, Div, HTML
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import re
+from django.forms.models import inlineformset_factory
+from django.contrib.auth.models import User
 
 from dateutil.relativedelta import *
+
+
+UserFacilityAssignmentFormSet = inlineformset_factory(User, UserFacilityAssignment, fields=('facility', 'date'), fk_name='user')
 
 
 def validate_not_future_date(value):
     if value > timezone.now().date():
         raise ValidationError("Date cannot be greater than today.")
 
+
+class EmergencyContactForm(forms.ModelForm):
+    class Meta:
+        model = EmergencyContact
+        exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility']
+        widgets = {
+            "date": DatePickerInput(),
+        }
+    #date = forms.DateField(validators=[validate_not_future_date])
 
 
 class PrepEligibilityForm(forms.ModelForm):
@@ -27,7 +41,7 @@ class PrepEligibilityForm(forms.ModelForm):
         widgets = {
             "assessment_date": DatePickerInput(),
         }
-    assessment_date = forms.DateField(validators=[validate_not_future_date])
+    #assessment_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class ClientForm(forms.ModelForm):
@@ -37,7 +51,7 @@ class ClientForm(forms.ModelForm):
         widgets = {
             "date_of_birth": DatePickerInput(),
          }
-    date_of_birth = forms.DateField(validators=[validate_not_future_date])
+    #date_of_birth = forms.DateField(validators=[validate_not_future_date])
 
 
 
@@ -55,7 +69,7 @@ class AddressForm(forms.ModelForm):
         }
 
     #date_at_address = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'format': 'yyyy-mm-dd'}))
-    date_at_address = forms.DateField(validators=[validate_not_future_date])
+    #date_at_address = forms.DateField(validators=[validate_not_future_date])
    
 
 
@@ -68,7 +82,7 @@ class ARVMedicationForm(forms.ModelForm):
             "report_date": DatePickerInput(),
             "due_date": DatePickerInput(),
          }
-    report_date = forms.DateField(validators=[validate_not_future_date])
+    #report_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class CD4CountForm(forms.ModelForm):
@@ -78,7 +92,7 @@ class CD4CountForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
-    test_date = forms.DateField(validators=[validate_not_future_date])
+    #test_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class ViralLoadForm(forms.ModelForm):
@@ -88,7 +102,7 @@ class ViralLoadForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
-    test_date = forms.DateField(validators=[validate_not_future_date])
+    #test_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class PhysicalExamForm(forms.ModelForm):
@@ -106,7 +120,7 @@ class PrepStatusDetailForm(forms.ModelForm):
         widgets = {
             "status_date": DatePickerInput(),
          }
-    status_date = forms.DateField(validators=[validate_not_future_date])
+    #status_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class SocialForm(forms.ModelForm):
@@ -116,7 +130,7 @@ class SocialForm(forms.ModelForm):
         widgets = {
             "date": DatePickerInput(),
          }
-    date = forms.DateField(validators=[validate_not_future_date])
+    #date = forms.DateField(validators=[validate_not_future_date])
 
 
 
@@ -129,15 +143,8 @@ class RiskForm(forms.ModelForm):
         widgets = {
             "date": DatePickerInput(),
          }
-    date = forms.DateField(validators=[validate_not_future_date])
+    #date = forms.DateField(validators=[validate_not_future_date])
 
-
-
-class EmergencyContactForm(forms.ModelForm):
-    class Meta:
-        model = EmergencyContact
-        #fields = 'status_date', 'prepstatus'
-        exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility']
 
 
 class STI_TestsDoneForm(forms.ModelForm):
@@ -149,7 +156,7 @@ class STI_TestsDoneForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
-    test_date = forms.DateField(validators=[validate_not_future_date])
+    #test_date = forms.DateField(validators=[validate_not_future_date])
 
 
 
@@ -164,9 +171,9 @@ class SexualHistoryForm(forms.ModelForm):
             "last_sexual_encounter": DatePickerInput(),
             "lmp_date": DatePickerInput(),
          }
-    interview_date = forms.DateField(validators=[validate_not_future_date])
-    last_sexual_encounter = forms.DateField(validators=[validate_not_future_date])
-    lmp_date = forms.DateField(validators=[validate_not_future_date])
+    #interview_date = forms.DateField(validators=[validate_not_future_date])
+    #last_sexual_encounter = forms.DateField(validators=[validate_not_future_date])
+    #lmp_date = forms.DateField(validators=[validate_not_future_date])
 
 
 
@@ -228,6 +235,11 @@ class RiskAssessmentForm(forms.ModelForm):
         'prescribed_prep_at_initial_visit_regime_months_duration',
         'prescribed_prep_at_initial_visit_date_of_initiation']
 
+        widgets = {
+            "interview_date": DatePickerInput(),
+            "last_sexual_encounter": DatePickerInput(),
+            "lmp_date": DatePickerInput(),
+         }
 
 
 class DocketNewForm(forms.ModelForm):
@@ -239,7 +251,7 @@ class DocketNewForm(forms.ModelForm):
         widgets = {
             "date_created": DatePickerInput(),
          }
-    date_created = forms.DateField(validators=[validate_not_future_date])
+    #date_created = forms.DateField(validators=[validate_not_future_date])
 
 
 class OutOfCareStatusForm(forms.ModelForm):
@@ -251,7 +263,7 @@ class OutOfCareStatusForm(forms.ModelForm):
         widgets = {
             "status_date": DatePickerInput(),
          }
-    status_date = forms.DateField(validators=[validate_not_future_date])
+    #status_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class Liver_Kidney_TestsForm(forms.ModelForm):
@@ -263,5 +275,5 @@ class Liver_Kidney_TestsForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
-    test_date = forms.DateField(validators=[validate_not_future_date])
+    #test_date = forms.DateField(validators=[validate_not_future_date])
 

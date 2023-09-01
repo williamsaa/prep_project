@@ -3,8 +3,20 @@ import inspect
 from .models import Client, ARVMedication, Address, GenderCode, MaritalStatusCode, RegionCode, RegimenLineCode, CommunityCode, Parish, Regimen, MonthDurationCode, CD4Count, ViralLoad, YesNoCode, OtherLab, EmergencyContact, RelationshipCode, Facility
 from .models import Organization, HivCategoryCode, RespiratoryRateCode, PapSmearResultCode, MammogramResultCode, UrinalysisCode, TreponemalResultCode, NonTreponemalResultCode, FamilyPlanningMethodCode, PatientStabilityStatusCode
 from .models import LabTestCode, PhysicalExam, PrepStatus, PrepStatusDetail, UserFacilityAssignment,  SocialHistory, RiskHistory, EmergencyContact, STI_TestCodes, STI_Results, STI_TestsDone, STI_Treatment, RiskAssessment, Reason_not_starting_prep, SexualHistory, Docket_new
-from .models import OutOfCareStatus, OutOfCareStatusCode
+from .models import OutOfCareStatus, OutOfCareStatusCode, Liver_Kidney_Tests, Liver_Kidney_Code
 
+from django.contrib.auth.admin import UserAdmin
+
+class UserFacilityAssignmentInline(admin.TabularInline):
+    model = UserFacilityAssignment
+    extra = 1  # Number of empty forms to display
+
+class CustomUserAdmin(UserAdmin):
+    inlines = [UserFacilityAssignmentInline]
+
+
+admin.site.register(Liver_Kidney_Tests)
+admin.site.register(Liver_Kidney_Code)
 
 admin.site.register(OutOfCareStatusCode)
 admin.site.register(OutOfCareStatus)

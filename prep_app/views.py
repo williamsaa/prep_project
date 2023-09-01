@@ -2,14 +2,21 @@
 from pyexpat.errors import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientForm, AddressForm, ARVMedicationForm, CD4CountForm, ViralLoadForm, PhysicalExamForm,  PrepStatusDetailForm, SocialForm, RiskForm, EmergencyContactForm, STI_TestsDoneForm, RiskAssessmentForm, PrepEligibilityForm, SexualHistoryForm, DocketNewForm, OutOfCareStatusForm
-from .models import Client, Address, ARVMedication, CD4Count, ViralLoad, PhysicalExam,  PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Facility, CommunityCode, Docket_new, OutOfCareStatus
+from .forms import ClientForm, AddressForm, ARVMedicationForm, CD4CountForm, ViralLoadForm, PhysicalExamForm,  PrepStatusDetailForm, SocialForm, RiskForm, EmergencyContactForm, STI_TestsDoneForm, RiskAssessmentForm, PrepEligibilityForm, SexualHistoryForm, DocketNewForm, OutOfCareStatusForm, Liver_Kidney_TestsForm
+from .models import Client, Address, ARVMedication, CD4Count, ViralLoad, PhysicalExam,  PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Facility, CommunityCode, Docket_new, OutOfCareStatus, Liver_Kidney_Tests
 from django.db.models import Q
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
+
+
 def close_window(request):
     return render(request, 'close_window.html')
+
+
+def reports1(request):
+    return render(request, 'reports1.html')
+
 
 #@login_required(login_url='/accounts/login_user/')
 def client_list(request):
@@ -30,16 +37,13 @@ def client_list(request):
         words = query_search.split()
 
         query = Q()
-        #for word in words:
-        #    query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)     
         for word in words:
-            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__number__icontains=word)
+            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__docket_no__icontains=word)
         
         myclients = mycs.filter(query).order_by('last_name', 'first_name')
     else:
-        myclients = mycs.order_by('last_name', 'first_name')
-   
-    #return render(request, template, {'myclients': myclients})
+        myclients = mycs.filter(last_name='zs456&^$g34@#')
+
     return render(request, 'client_list.html', {'clients': myclients, 'facilityname': facilityname})
 
 #-------------------
@@ -85,7 +89,7 @@ def fetch_communities(request):
     return JsonResponse({'communities': list(communities)})
 
 
-
+# start address
 def create_address(request, client_id):
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
@@ -137,7 +141,7 @@ def address_list(request, client_id):
     addresses = Address.objects.filter(client_id=client_id)
     return render(request, 'address_list.html', {'addresses': addresses, 'client_id': client_id})
 
-
+# end adddress
 
 def create_arvmedication(request, client_id):
     client = get_object_or_404(Client, pk=client_id)
@@ -815,7 +819,7 @@ def edit_outofcarestatus(request, outofcarestatus_id):
             return render(request, 'close_window.html')
     else:
         form = OutOfCareStatusForm(instance=outofcarestatus)
-    return render(request, 'edit_docket.html', {'form': form, 'outofcarestatus': outofcarestatus})
+    return render(request, 'edit_outofcarestatus.html', {'form': form, 'outofcarestatus': outofcarestatus})
 
 
 def delete_outofcarestatus(request, outofcarestatus_id):
@@ -825,5 +829,113 @@ def delete_outofcarestatus(request, outofcarestatus_id):
         outofcarestatus.delete()
         return redirect('client_list')
     return render(request, 'delete_outofcarestatus.html', {'outofcarestatus': outofcarestatus, 'client': client})
-# end Dockets
+# end out of care status
+
+
+
+#Liver Function
+def create_liverkidney(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    if request.method == 'POST':
+        form = Liver_Kidney_TestsForm(request.POST)
+        if form.is_valid():
+            lf = form.save(commit=False)
+            lf.facility_id = request.session['facility']
+            lf.created_by_id = request.session['User_id']
+            lf.client = client
+            lf.save()
+            return render(request, 'close_window.html')
+            #return redirect('edit_client', client_id=client_id)
+    else:
+        form = Liver_Kidney_TestsForm()
+    return render(request, 'create_liverkidney.html', {'form': form, 'client': client})
+
+
+
+def liverkidney_list(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    liverkidney = Liver_Kidney_Tests.objects.filter(client_id=client_id)
+    return render(request, 'liverkidney_list.html', {'liverkidney': liverkidney, 'client_id': client_id})
+
+
+
+def edit_liverkidney(request, liverkidney_id):
+    liverkidneytest = get_object_or_404(Liver_Kidney_Tests, pk=liverkidney_id)
+    client = liverkidneytest.client
+
+    if request.method == 'POST':
+        form = Liver_Kidney_TestsForm(request.POST, instance=liverkidneytest)
+        if form.is_valid():
+            form.modified_by_id =  request.session['User_id']
+            form.facility_id = request.session['facility']
+
+            form.modified_on =  datetime.now()
+            form.save()
+            return render(request, 'close_window.html')
+    else:
+        form = Liver_Kidney_TestsForm(instance=liverkidneytest)
+    return render(request, 'edit_liverkidney.html', {'form': form, 'liverkidneytest': liverkidneytest})
+
+
+def delete_liverkidney(request, liverkidney_id):
+    liverkidneytest = get_object_or_404(Liver_Kidney_Tests, pk=liverkidney_id)
+    client = liverkidneytest.client
+    if request.method == 'POST':
+        liverkidneytest.delete()
+        return redirect('client_list')
+    return render(request, 'delete_liverkidney.html', {'liverkidneytest': liverkidneytest, 'client': client})
+# end liver function
+
+
+
+#start emergency contact
+
+def create_emergencycontact(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    if request.method == 'POST':
+        form = EmergencyContactForm(request.POST)
+        if form.is_valid():
+            emergencycontact = form.save(commit=False)
+            emergencycontact.client = client
+            emergencycontact.facility_id = request.session['facility']
+            emergencycontact.created_by_id = request.session['User_id']
+            emergencycontact.save()
+            return render(request, 'close_window.html')
+
+            #return redirect('edit_client', client_id=client_id)
+    else:
+        form = EmergencyContactForm()
+    return render(request, 'create_emergencycontact.html', {'form': form, 'client': client})
+
+
+
+def edit_emergencycontact(request, emergencycontact_id):
+    emergencycontact = get_object_or_404(EmergencyContact, pk=emergencycontact_id)
+    client = emergencycontact.client
+    if request.method == 'POST':
+        form = EmergencyContactForm(request.POST, instance=emergencycontact)
+        if form.is_valid():
+            emergencycontact = form.save(commit=False)
+            emergencycontact.modified_by_id =  request.session['User_id']
+            emergencycontact.modified_on =  datetime.now()
+            emergencycontact.save()
+            return render(request, 'close_window.html')
+    else:
+        form = EmergencyContactForm(instance=emergencycontact)
+    return render(request, 'edit_emergencycontact.html', {'form': form, 'emergencycontact': emergencycontact})
+
+
+def delete_emergencycontact(request, emergencycontact_id):
+    emergencycontact = get_object_or_404(EmergencyContact, pk=emergencycontact_id)
+    client = emergencycontact.client
+    if request.method == 'POST':
+        emergencycontact.delete()
+        return redirect('edit_emergencycontact', client_id=client.id)
+    return render(request, 'delete_emergencycontact.html', {'emergencycontact': emergencycontact, 'client': client})
+
+
+def emergencycontact_list(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    emergencycontact = EmergencyContact.objects.filter(client_id=client_id)
+    return render(request, 'emergencycontact_list.html', {'emergencycontact': emergencycontact, 'client_id': client_id})
 

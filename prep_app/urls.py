@@ -21,13 +21,16 @@ from .views import (
     sexualhistory_list, edit_sexualhistory, create_sexualhistory, delete_sexualhistory,
 
     edit_outofcarestatus, create_outofcarestatus, delete_outofcarestatus, outofcarestatus_list,
+    liverkidney_list, edit_liverkidney, create_liverkidney, delete_liverkidney,
+    emergencycontact_list, edit_emergencycontact, create_emergencycontact, delete_emergencycontact,
 
+    reports1,
 
 )
 
 urlpatterns = [
 
-
+    path('reports1/', reports1, name='reports1'),
     path('close_window/', close_window, name='close_window'),
     path('list/', client_list, name='client_list'),
     path('create/', create_client, name='create_client'),
@@ -116,6 +119,20 @@ urlpatterns = [
     path('delete/outofcarestatus/<int:outofcarestatus_id>/', delete_outofcarestatus, name='delete_outofcarestatus'),
     path('outofcarestatus_list/<int:client_id>/', outofcarestatus_list, name='outofcarestatus_list'),
 
-    path('fetch_communities/', fetch_communities, name='fetch_communities'),
+    path('create/liverkidney/<int:client_id>/', create_liverkidney, name='create_liverkidney'),
+    path('edit/liverkidney/<int:liverkidney_id>/', edit_liverkidney, name='edit_liverkidney'),
+    path('delete/liverkidney/<int:liverkidney_id>/', delete_liverkidney, name='delete_liverkidney'),
+    path('liverkidney_list/<int:client_id>/', liverkidney_list, name='liverkidney_list'),
+
+    path('create/emergencycontact/<int:client_id>/', create_emergencycontact, name='create_emergencycontact'),
+    path('edit/emergencycontact/<int:emergencycontact_id>/', edit_emergencycontact, name='edit_emergencycontact'),
+    path('delete/emergencycontact/<int:emergencycontacty_id>/', delete_emergencycontact, name='delete_emergencycontact'),
+    path('emergencycontact_list/<int:client_id>/', emergencycontact_list, name='emergencycontact_list'),
+
+
+    path('fetch_communities/', fetch_communities, name='fetch_communities'), 
+
+
+
 
 ]

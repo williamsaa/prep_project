@@ -281,7 +281,7 @@ class YesNoCode(models.Model):
     code = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.code)
+        return "%s" % (self.name)
 
     def natural_key(self):
         return (self.name, self.code, )
@@ -1512,9 +1512,10 @@ class Docket_new(TSIS2BaseModel):
     
 
 class OutOfCareStatus(TSIS2BaseModel):
+    status_date = models.DateField(blank=False, null=False)
     client = models.ForeignKey("client", blank=False, null=False, on_delete=models.PROTECT)
     reason  = models.ForeignKey("outofcarestatuscode", blank=False, null=False, on_delete=models.PROTECT)
-    status_date = models.DateField(blank=False, null=False)
+   
     facility = models.ForeignKey("Facility", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -1545,3 +1546,4 @@ class Liver_Kidney_Code(models.Model):
     
     def __str__(self):
         return "%s" % (self.name)
+    
