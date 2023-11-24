@@ -38,9 +38,11 @@ def client_list(request):
 
         query = Q()
         for word in words:
-            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__docket_no__icontains=word)
+            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__docket_no__icontains=word) | Q(uic__icontains=word)
         
-        myclients = mycs.filter(query).order_by('last_name', 'first_name')
+        myclients = mycs.filter(query).order_by('last_name', 'first_name').distinct()
+        
+
     else:
         myclients = mycs.filter(last_name='zs456&^$g34@#')
 
@@ -91,10 +93,14 @@ def fetch_communities(request):
 
 # start address
 def create_address(request, client_id):
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = AddressForm(request.POST)
         if form.is_valid():
+            search_value = form.cleaned_data['community_search']
+            matching_addresses = Address.objects.filter(communitycode__name__icontains=search_value)
+
             address = form.save(commit=False)
             address.client = client
             address.facility_id = request.session['facility']

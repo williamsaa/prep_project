@@ -1,10 +1,13 @@
 # client/forms.py
 
 from django import forms
+
 from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, UserFacilityAssignment, EmergencyContact
 #from crispy_forms.layout import Layout, Fieldset
 from crispy_forms.helper import FormHelper
+
 from django.utils.encoding import force_str
+
 from django_flatpickr.widgets import DatePickerInput
 from crispy_forms.layout import Layout, Fieldset, Div, HTML
 from django.core.exceptions import ValidationError
@@ -12,7 +15,8 @@ from django.utils import timezone
 import re
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.models import User
-
+from django.utils.safestring import mark_safe
+from django.template.loader import render_to_string
 from dateutil.relativedelta import *
 
 
@@ -56,6 +60,8 @@ class ClientForm(forms.ModelForm):
 
 
 class AddressForm(forms.ModelForm):
+    #community_search = forms.CharField(label="Community Search", required=False)
+
     class Meta:
         model = Address
         fields = 'date_at_address', 'street_name', 'parish', 'community', 'telephone_cell1', 'telephone_cell2', 'notes'
@@ -248,9 +254,15 @@ class DocketNewForm(forms.ModelForm):
         #fields = 'status_date', 'prepstatus'
         exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility', 'deactivated_at']
 
+        #widgets = {
+        #    "date_created": DatePickerInput(),
+        # }
+
         widgets = {
-            "date_created": DatePickerInput(),
-         }
+            "date_created": DatePickerInput(attrs={'max': timezone.now().strftime('%Y-%m-%d')}),
+        }
+
+        
     #date_created = forms.DateField(validators=[validate_not_future_date])
 
 

@@ -51,7 +51,7 @@ class Client(TSIS2BaseModel):
     pet_name = models.CharField(max_length=255, blank=True, null=True)
     sex_at_birth = models.ForeignKey('GenderCode', blank=False, null=False, on_delete=models.PROTECT, default=1)
     current_gender =  models.CharField(max_length=255, choices = CURRENTGENDER, null=True)
-
+    unique_identfier_code = models.CharField(max_length=50, blank=True, null=True)
     date_of_birth = models.DateField(blank=False, null=False, validators=[validate_not_future_date])
     marital_status = models.ForeignKey('MaritalStatusCode', blank=False, null=False, on_delete=models.PROTECT, default=1)
     death_date = models.DateField(blank=True, null=True)
@@ -66,6 +66,16 @@ class Client(TSIS2BaseModel):
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
     
+    def save(self, *args, **kwargs):
+        # Calculate the UIC based on the provided components
+        unique_identfier_code = (
+            self.last_name[:3] +          
+            self.sex_at_birth.name[0] +
+            str(self.date_of_birth.year)[-2:] +
+            str(self.date_of_birth.day).zfill(2)
+        )
+        self.unique_identfier_code = unique_identfier_code
+        super().save(*args, **kwargs)
 # End Client model
 
 # --------------------------------------------
@@ -167,7 +177,7 @@ class Regimen(TSIS2BaseModel):
     name = models.CharField(max_length=255, blank=False, null=False)
    
     def __str__(self):
-        return "%s (%s)" % (self.name, self.line.name)
+        return "%s" % (self.name,)
 
     def natural_key(self):
         return (self.name, self.line, )
