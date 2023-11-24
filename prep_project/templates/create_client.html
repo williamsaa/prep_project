@@ -16,6 +16,15 @@
     <div class="col-md-6"> </div>
     <div class="col-md-3">    <button type="submit" class="btn btn-primary" style="font-size: 20px;">Save Form</button> </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-3"></b>
+    </div>
+    <div class="col-md-3"  >{{ form.unique_identfier_code|as_crispy_field }} </div>
+    <div class="col-md-6">     </div>
+  </div>
+
+
   <div class="row">
     <div class="col-md-3"> <b>{{ form.last_name|as_crispy_field }}</b></div>
     <div class="col-md-3"> <b>{{ form.first_name|as_crispy_field}}</b></div>

@@ -33,6 +33,12 @@ label {
   {% csrf_token %}
   {{ form.media }} 
   {{ form.your_date_field.errors }}
+  <div class="row">
+    <div class="col-md-3"><b>Unique Identifier Code</b>
+    </div>
+    <div class="col-md-6">{{ form.uic }} </div>
+    <div class="col-md-3">     </div>
+  </div>
 
   <div class="row">
     <div class="col-md-3"> <b>{{ form.last_name|as_crispy_field }}</b></div>
