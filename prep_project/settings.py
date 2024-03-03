@@ -26,7 +26,7 @@ DEBUG = True
 
 #ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'williamsaa.pythonanywhere.com']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web-production-d7a3.up.railway.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web-production-d7a3.up.railway.app','prep-demo.org']
 
 # Application definition
 
