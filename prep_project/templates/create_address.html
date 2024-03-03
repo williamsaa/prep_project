@@ -33,35 +33,3 @@
  </form>
 
 {% endblock %}
-
-
-<script>
-  $(document).ready(function() {
-      $('.datepicker').datepicker();
-      console.log("Document is ready. Binding event.");
-      // Add an event listener to the parish select field
-      $("#id_parish").on("change", function() {
-          var parishId = $(this).val();
-          var communitySelect = $("#id_community");
-  
-          // Clear current options in the community select field
-          communitySelect.empty();
-  
-          // Make an AJAX request to fetch communities based on the selected parish
-          $.ajax({
-              url: "{% url 'fetch_communities' %}",  // Use the correct URL name
-              data: { parish_id: parishId },
-              dataType: "json",
-              success: function(data) {
-                  $.each(data.communities, function(index, community) {
-                      // Add fetched communities as options in the community select field
-                      communitySelect.append($("<option>", {
-                          value: community.id,
-                          text: community.name
-                      }));
-                  });
-              }
-          });
-      });
-  });
-</script>
