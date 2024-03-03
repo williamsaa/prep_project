@@ -2,7 +2,7 @@
 
 from django.urls import path
 from .views import (
-    close_window, fetch_communities,
+    close_window, fetch_communities, get_communities,
     client_list,  create_client,  edit_client,  delete_client,  client_detail,
     create_address, edit_address,  delete_address,  address_list,
     create_arvmedication,   edit_arvmedication,     delete_arvmedication, arvmedication_list,
@@ -24,12 +24,12 @@ from .views import (
     liverkidney_list, edit_liverkidney, create_liverkidney, delete_liverkidney,
     emergencycontact_list, edit_emergencycontact, create_emergencycontact, delete_emergencycontact,
 
-    reports1,
+    reports1, 
 
 )
 
 urlpatterns = [
-
+    path('get_communities/', get_communities, name='get_communities'),
     path('reports1/', reports1, name='reports1'),
     path('close_window/', close_window, name='close_window'),
     path('list/', client_list, name='client_list'),

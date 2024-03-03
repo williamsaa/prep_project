@@ -84,8 +84,7 @@ class Address(TSIS2BaseModel):
     date_at_address = models.DateField(blank=False, null=False)
     street_name = models.CharField(max_length=255, blank=True, null=True)
     parish = models.ForeignKey("Parish", blank=False, null=False, on_delete=models.PROTECT)
-    community = models.ForeignKey('CommunityCode', blank=False, null=False,
-                                  related_name="address_community", on_delete=models.PROTECT)
+    community =  models.CharField(max_length=255, blank=True, null=True)
     
     telephone_cell1 = models.CharField(max_length=255, blank=True, null=True)
     telephone_cell2 = models.CharField(max_length=255, blank=True, null=True)
@@ -343,8 +342,7 @@ class EmergencyContact(TSIS2BaseModel):
     last_name = models.CharField(max_length=255, blank=False, null=False)
     age_in_years = models.IntegerField(blank=True, null=True)
     street_name = models.CharField(max_length=255, blank=True, null=True)
-    community = models.ForeignKey('CommunityCode', blank=False, null=False,
-                                  related_name="emergency_contact_community", on_delete=models.PROTECT)
+    community =  models.CharField(max_length=255, blank=True, null=True)
     parish = models.ForeignKey('Parish', blank=False, null=False, related_name="emergency_contact_parish", on_delete=models.PROTECT)
     telephone_cell = models.CharField(max_length=255, blank=True, null=True)
     telephone_home = models.CharField(max_length=255, blank=True, null=True)

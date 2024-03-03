@@ -1,8 +1,10 @@
 # client/forms.py
 
 from django import forms
+from dal import autocomplete, forward
 
 from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, UserFacilityAssignment, EmergencyContact
+from .models import YesNoCode, CommunityCode
 #from crispy_forms.layout import Layout, Fieldset
 from crispy_forms.helper import FormHelper
 
@@ -60,23 +62,28 @@ class ClientForm(forms.ModelForm):
 
 
 class AddressForm(forms.ModelForm):
-    #community_search = forms.CharField(label="Community Search", required=False)
 
     class Meta:
         model = Address
         fields = 'date_at_address', 'street_name', 'parish', 'community', 'telephone_cell1', 'telephone_cell2', 'notes'
-        widgets = {
-            'parish': forms.Select(attrs={'class': 'form-select', 'id': 'id_parish'}),
-            'community': forms.Select(attrs={'class': 'form-select', 'id': 'id_community'}),
-         }
+        #widgets = {
+        #    'parish': forms.Select(attrs={'class': 'form-select', 'id': 'id_parish'}),
+        #    'community': forms.Select(attrs={'class': 'form-select', 'id': 'id_community'}),
+        # }
         
         widgets = {
             "date_at_address": DatePickerInput(),
         }
 
+        #class Media:
+        #        js = ('js/community_dropdown.js',)
     #date_at_address = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'format': 'yyyy-mm-dd'}))
     #date_at_address = forms.DateField(validators=[validate_not_future_date])
-   
+
+
+
+
+
 
 
 

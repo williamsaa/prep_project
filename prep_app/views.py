@@ -38,7 +38,7 @@ def client_list(request):
 
         query = Q()
         for word in words:
-            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__docket_no__icontains=word) | Q(uic__icontains=word)
+            query &= Q(last_name__icontains=word) | Q(first_name__icontains=word) | Q(middle_name__icontains=word) | Q(pet_name__icontains=word)  | Q(docket_new__docket_no__icontains=word) | Q(unique_identfier_code__icontains=word)
         
         myclients = mycs.filter(query).order_by('last_name', 'first_name').distinct()
         
@@ -90,7 +90,10 @@ def fetch_communities(request):
     print(f"Filtered communities: {communities}")
     return JsonResponse({'communities': list(communities)})
 
-
+def get_communities(request):
+    parish_id = request.GET.get('parish', None)
+    communities = CommunityCode.objects.filter(parish_id=parish_id).values('id', 'name')
+    return JsonResponse(list(communities), safe=False)
 # start address
 def create_address(request, client_id):
 
@@ -98,8 +101,8 @@ def create_address(request, client_id):
     if request.method == 'POST':
         form = AddressForm(request.POST)
         if form.is_valid():
-            search_value = form.cleaned_data['community_search']
-            matching_addresses = Address.objects.filter(communitycode__name__icontains=search_value)
+            #search_value = form.cleaned_data['community_search']
+            #matching_addresses = Address.objects.filter(communitycode__name__icontains=search_value)
 
             address = form.save(commit=False)
             address.client = client
