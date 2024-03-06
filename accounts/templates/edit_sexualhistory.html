@@ -11,7 +11,13 @@
 <h4>Edit / Update Sexual History</h4>
 
 <form method="POST" class="card p-3 mt-5 form-floating form-horizontal form-group">
-
+  <h2 class="btn btn-danger"> 
+    {{ form.non_field_errors }}
+    {{ form.interview_date.errors }} 
+    {{ form.last_sexual_encounter.errors }} 
+    {{ form.lmp_date.errors }} 
+ </h2>
+ 
   {% csrf_token %}
   {{ form.media }} 
   {{ form|crispy}}

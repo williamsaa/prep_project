@@ -12,7 +12,10 @@
 <h4>Add / Update Risk Info</h4>
 
 <form method="POST" class="card p-3 mt-5 form-floating form-horizontal form-group">
-
+  <h2 class="btn btn-danger"> 
+    {{ form.non_field_errors }}
+   {{ form.date.errors }} 
+ </h2>
   {% csrf_token %}
   {{ form.media }} 
   {{ form|crispy}}
