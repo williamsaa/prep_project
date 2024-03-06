@@ -20,6 +20,17 @@ CONDOM_USE = (
     ('Never','Never'),
 )
 
+HEPATITIS_TYPE = (
+    ('Hepatitis B', 'Hepatitis B'),
+    ('Hepatitis C', 'Hepatitis C'),
+    )
+
+TEST_RESULTS1 = (
+    ('Positive', 'Positive'),
+    ('Negative', 'Negative'),
+    ('Not Done', 'Not Done'),
+    )
+
 HIV_Result = (
     ('Positive', 'Positive'),
     ('Negative', 'Negative'),
@@ -100,9 +111,9 @@ class Address(TSIS2BaseModel):
 # --------------------------------------------
 class ARVMedication(TSIS2BaseModel):
     client = models.ForeignKey("Client", blank=False, null=False, on_delete=models.PROTECT)
+    report_date = models.DateField(blank=False, null=False)
     regimen = models.ForeignKey("Regimen", blank=False, null=False, on_delete=models.PROTECT)
     duration = models.ForeignKey("MonthDurationCode", blank=False, null=False, on_delete=models.PROTECT)
-    report_date = models.DateField(blank=False, null=False)
     due_date = models.DateField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     facility = models.ForeignKey("Facility", on_delete=models.CASCADE,default=8)
@@ -1061,7 +1072,7 @@ class RiskHistory(TSIS2BaseModel):
     blood_transfusion = models.ForeignKey("YesNoCode", blank=False, null=False, related_name='riskhistory_blood_transfusion', on_delete=models.PROTECT)
     transgender = models.ForeignKey("YesNoCode", blank=False, null=False, related_name='riskhistory_transgender', on_delete=models.PROTECT)
     msm = models.ForeignKey("YesNoCode", blank=False, null=False, related_name='riskhistory_msm', on_delete=models.PROTECT)
-    pregnant = models.ForeignKey("YesNoCode", blank=False, null=False, related_name='riskhistory_pregnant', on_delete=models.PROTECT)
+    pregnant = models.ForeignKey("YesNoCode", blank=True, null=True, related_name='riskhistory_pregnant', on_delete=models.PROTECT,default=0)
 
 
     class Meta(object):
@@ -1331,8 +1342,15 @@ class Reason_not_starting_prep(models.Model):
     def __str__(self):
         return "%s" % (self.name)
 
-# risk assessment
 
+class Hepatitis_Results(TSIS2BaseModel):
+    client = models.ForeignKey("Client", blank=False, null=False, on_delete=models.PROTECT)
+    facility = models.ForeignKey("Facility", blank=False, null=False, on_delete=models.PROTECT)
+    test_date = models.DateField(blank=False, null=False)
+    hepatitis_type = models.CharField(max_length=50, blank=False, null=False, choices=HEPATITIS_TYPE)
+    results = models.CharField(max_length=50, blank=False, null=False, choices=TEST_RESULTS1)
+
+# risk assessment
 class RiskAssessment(TSIS2BaseModel):
 
     RISKS = (
@@ -1473,13 +1491,13 @@ class SexualHistory(TSIS2BaseModel):
 
     hiv_status_sex_partner = models.CharField(blank=True, null=True, max_length=30, choices=HIV_Result )
 
-    no_sex_partners_last_month = models.IntegerField(
+    no_of_sex_partners_last_month = models.IntegerField(default=0,
         validators=[MinValueValidator(0), MaxValueValidator(1000)]    )
     
-    no_sex_partners_last_3month = models.IntegerField(
+    no_of_sex_partners_last_3month = models.IntegerField(default=0,
         validators=[MinValueValidator(0), MaxValueValidator(5000)]    )
     
-    no_sex_partners_last_12month = models.IntegerField(
+    no_of_sex_partners_last_12month = models.IntegerField(default=0,
         validators=[MinValueValidator(0), MaxValueValidator(10000)]   )
     
 
@@ -1488,7 +1506,7 @@ class SexualHistory(TSIS2BaseModel):
     anal_sex_in_last_12_months = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='anal_sex_in_12months_set')
     anal_receptive = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='anal_receptive_set')
     anal_insertive = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='anal_insertive_set')
-    circumcised = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='circumcised_set')
+    circumcised = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='circumcised_set', default=1)
     in_your_lifetime_ever_paid_for_sex = models.ForeignKey("YesNoCode", on_delete=models.CASCADE,related_name='paid_for_sex_set')
     is_sex_in_exchange_for_money_a_source_of_income_for_you = models.ForeignKey("YesNoCode", on_delete=models.CASCADE,related_name='sex_for_money_income_set')
     condom_use_last_sex_encounter = models.ForeignKey("YesNoCode", on_delete=models.CASCADE, related_name='condom_use_last_sex_set')
@@ -1502,7 +1520,7 @@ class SexualHistory(TSIS2BaseModel):
 
 
     def __str__(self):
-        return "%s %s" % (self.client, self.date)
+        return "%s %s" % (self.client, self.interview_date)
 
     class Meta(object):
         default_permissions = ('add', 'change', 'delete', 'view', 'list')

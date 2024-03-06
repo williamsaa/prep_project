@@ -1,10 +1,13 @@
 # client/forms.py
 
+import datetime
+from venv import logger
 from django import forms
 from dal import autocomplete, forward
 
-from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, UserFacilityAssignment, EmergencyContact
-from .models import YesNoCode, CommunityCode
+
+from .models import Client,  ARVMedication, Address, CD4Count, ViralLoad, PhysicalExam, PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact
+from .models import YesNoCode, CommunityCode, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, UserFacilityAssignment, EmergencyContact, Hepatitis_Results
 #from crispy_forms.layout import Layout, Fieldset
 from crispy_forms.helper import FormHelper
 
@@ -30,6 +33,19 @@ def validate_not_future_date(value):
         raise ValidationError("Date cannot be greater than today.")
 
 
+class HepatitisResultsForm(forms.ModelForm):
+    class Meta:
+        model = Hepatitis_Results
+        exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility']
+        widgets = {
+            "test_date": DatePickerInput(),
+        }
+    def clean_test_date(self):
+        date = self.cleaned_data['test_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date   
+
 class EmergencyContactForm(forms.ModelForm):
     class Meta:
         model = EmergencyContact
@@ -37,6 +53,12 @@ class EmergencyContactForm(forms.ModelForm):
         widgets = {
             "date": DatePickerInput(),
         }
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date 
     #date = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -47,6 +69,12 @@ class PrepEligibilityForm(forms.ModelForm):
         widgets = {
             "assessment_date": DatePickerInput(),
         }
+
+    def clean_assessment_date(self):
+        date = self.cleaned_data['assessment_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date    
     #assessment_date = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -57,6 +85,12 @@ class ClientForm(forms.ModelForm):
         widgets = {
             "date_of_birth": DatePickerInput(),
          }
+        
+    def clean_date_of_birth(self):
+        date = self.cleaned_data['date_of_birth']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date   
     #date_of_birth = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -66,20 +100,16 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = 'date_at_address', 'street_name', 'parish', 'community', 'telephone_cell1', 'telephone_cell2', 'notes'
-        #widgets = {
-        #    'parish': forms.Select(attrs={'class': 'form-select', 'id': 'id_parish'}),
-        #    'community': forms.Select(attrs={'class': 'form-select', 'id': 'id_community'}),
-        # }
-        
+       
         widgets = {
             "date_at_address": DatePickerInput(),
         }
 
-        #class Media:
-        #        js = ('js/community_dropdown.js',)
-    #date_at_address = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'format': 'yyyy-mm-dd'}))
-    #date_at_address = forms.DateField(validators=[validate_not_future_date])
-
+    def clean_date_at_address(self):
+        date = self.cleaned_data['date_at_address']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date     
 
 
 
@@ -95,6 +125,12 @@ class ARVMedicationForm(forms.ModelForm):
             "report_date": DatePickerInput(),
             "due_date": DatePickerInput(),
          }
+        
+    def clean_report_date(self):
+        date = self.cleaned_data['report_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date   
     #report_date = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -115,6 +151,12 @@ class ViralLoadForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
+        
+    def clean_test_date(self):
+        date = self.cleaned_data['test_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date      
     #test_date = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -133,7 +175,11 @@ class PrepStatusDetailForm(forms.ModelForm):
         widgets = {
             "status_date": DatePickerInput(),
          }
-    #status_date = forms.DateField(validators=[validate_not_future_date])
+    def clean_status_date(self):
+        date = self.cleaned_data['status_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date   
 
 
 class SocialForm(forms.ModelForm):
@@ -143,6 +189,12 @@ class SocialForm(forms.ModelForm):
         widgets = {
             "date": DatePickerInput(),
          }
+        
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date     
     #date = forms.DateField(validators=[validate_not_future_date])
 
 
@@ -151,12 +203,26 @@ class SocialForm(forms.ModelForm):
 class RiskForm(forms.ModelForm):
     class Meta:
         model = RiskHistory
-        #fields = 'status_date', 'prepstatus'
         exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by','client', 'facility']
         widgets = {
             "date": DatePickerInput(),
          }
-    #date = forms.DateField(validators=[validate_not_future_date])
+        
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today(): 
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date
+    
+        
+    def __init__(self, *args, **kwargs):
+        gender = kwargs.pop('gender', None)
+        super(RiskForm, self).__init__(*args, **kwargs)
+        
+        if gender == 'Male':
+            self.fields.pop('pregnant', None)
+        else:
+            self.fields.get('pregnant', None)
 
 
 
@@ -169,26 +235,58 @@ class STI_TestsDoneForm(forms.ModelForm):
         widgets = {
             "test_date": DatePickerInput(),
          }
-    #test_date = forms.DateField(validators=[validate_not_future_date])
+        
 
+    def clean_test_date(self):
+        date = self.cleaned_data['test_date']
+        if date > datetime.date.today(): 
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date    
+    #test_date = forms.DateField(validators=[validate_not_future_date])
 
 
 class SexualHistoryForm(forms.ModelForm):
     class Meta:
         model = SexualHistory
-        #fields = 'status_date', 'prepstatus'
         exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility', 'deactivated_at']
-
         widgets = {
-            "interview_date": DatePickerInput(),
-            "last_sexual_encounter": DatePickerInput(),
-            "lmp_date": DatePickerInput(),
-         }
-    #interview_date = forms.DateField(validators=[validate_not_future_date])
-    #last_sexual_encounter = forms.DateField(validators=[validate_not_future_date])
-    #lmp_date = forms.DateField(validators=[validate_not_future_date])
+                    "interview_date": DatePickerInput(),
+                    "last_sexual_encounter": DatePickerInput(),
+                    "lmp_date": DatePickerInput(),
+                }
+        
+    def __init__(self, *args, **kwargs):
+        gender = kwargs.pop('gender', None)
+        super(SexualHistoryForm, self).__init__(*args, **kwargs)
+        
+        if gender == 'Male':
+            # Exclude specific fields for Male
+            self.fields.pop('lmp_date', None)
+            self.fields.get('circumcised', None)
+        else:
+            # Exclude specific fields for other genders
+            self.fields.pop('circumcised', None)
+            self.fields.get('lmp_date', None)
 
+    def clean_interview_date(self):
+        date = self.cleaned_data['interview_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The Interview date cannot be in the future!")
+        return date   
 
+    def clean_last_sexual_encounter(self):
+        date = self.cleaned_data['last_sexual_encounter']  # Use get() to handle None
+        if date and date > datetime.date.today():  # Check if date is not None before comparison
+            raise forms.ValidationError("The Last sexual encounter date cannot be in the future!")
+        return date
+
+    def clean_lmp_date(self):
+        date = self.cleaned_data['lmp_date']
+        if date and date > datetime.date.today():  # Check if date is not None before comparison
+            raise forms.ValidationError("The LMP date cannot be in the future!")
+        return date
+    
+           
 
 class RiskAssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -261,17 +359,17 @@ class DocketNewForm(forms.ModelForm):
         #fields = 'status_date', 'prepstatus'
         exclude = ['created_at', 'modified_on', 'created_by', 'modified_by', 'is_active', 'deleted_at', 'deleted_by', 'client', 'facility', 'deactivated_at']
 
-        #widgets = {
-        #    "date_created": DatePickerInput(),
-        # }
-
         widgets = {
             "date_created": DatePickerInput(attrs={'max': timezone.now().strftime('%Y-%m-%d')}),
         }
 
+    def clean_date_created(self):
+        date = self.cleaned_data['date_created']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date  
         
-    #date_created = forms.DateField(validators=[validate_not_future_date])
-
+    
 
 class OutOfCareStatusForm(forms.ModelForm):
     class Meta:
@@ -282,6 +380,12 @@ class OutOfCareStatusForm(forms.ModelForm):
         widgets = {
             "status_date": DatePickerInput(),
          }
+        
+    def clean_status_date(self):
+        date = self.cleaned_data['status_date']
+        if date > datetime.date.today():  # 🖘 raise error if greater than
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date   
     #status_date = forms.DateField(validators=[validate_not_future_date])
 
 

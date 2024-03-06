@@ -2,8 +2,8 @@
 from pyexpat.errors import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientForm, AddressForm, ARVMedicationForm, CD4CountForm, ViralLoadForm, PhysicalExamForm,  PrepStatusDetailForm, SocialForm, RiskForm, EmergencyContactForm, STI_TestsDoneForm, RiskAssessmentForm, PrepEligibilityForm, SexualHistoryForm, DocketNewForm, OutOfCareStatusForm, Liver_Kidney_TestsForm
-from .models import Client, Address, ARVMedication, CD4Count, ViralLoad, PhysicalExam,  PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Facility, CommunityCode, Docket_new, OutOfCareStatus, Liver_Kidney_Tests
+from .forms import ClientForm, AddressForm, ARVMedicationForm, CD4CountForm, ViralLoadForm, PhysicalExamForm,  PrepStatusDetailForm, SocialForm, RiskForm, EmergencyContactForm, STI_TestsDoneForm, RiskAssessmentForm, PrepEligibilityForm, SexualHistoryForm, DocketNewForm, OutOfCareStatusForm, Liver_Kidney_TestsForm, HepatitisResultsForm
+from .models import Client, Address, ARVMedication, CD4Count, ViralLoad, PhysicalExam,  PrepStatusDetail, SocialHistory, RiskHistory, EmergencyContact, STI_TestsDone, RiskAssessment, PrepEligibility, SexualHistory, Facility, CommunityCode, Docket_new, OutOfCareStatus, Liver_Kidney_Tests, Hepatitis_Results
 from django.db.models import Q
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -15,17 +15,26 @@ def close_window(request):
 
 
 def reports1(request):
-    return render(request, 'reports1.html')
+    if request.session['User_id'] is None:       
+        return redirect ('login_user')
+    else:
+        #print  ( request.session['User_id'] )
+        #print  ( request.session['User'] )
+        return render(request, 'reports1.html')
 
 
 #@login_required(login_url='/accounts/login_user/')
+  
 def client_list(request):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     facilityname = ''
     facility_id1 = request.session['facility']
     try:
         facilityname = Facility.objects.get(pk=facility_id1)
     except Facility.DoesNotExist:
-        facilityname = None
+         return redirect('login_user')
 
     words = ''
     query_search = request.GET.get('query')
@@ -51,6 +60,9 @@ def client_list(request):
 #-------------------
 
 def create_client(request):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+   
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
@@ -65,6 +77,9 @@ def create_client(request):
 
 
 def edit_client(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+    
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = ClientForm(request.POST, instance=client)
@@ -77,6 +92,9 @@ def edit_client(request, client_id):
 
 
 def delete_client(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+    
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         client.delete()
@@ -119,6 +137,9 @@ def create_address(request, client_id):
 
 
 def edit_address(request, address_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+    
     address = get_object_or_404(Address, pk=address_id)
     client = address.client
     if request.method == 'POST':
@@ -137,6 +158,9 @@ def edit_address(request, address_id):
 
 
 def delete_address(request, address_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+    
     address = get_object_or_404(Address, pk=address_id)
     client = address.client
     if request.method == 'POST':
@@ -146,13 +170,22 @@ def delete_address(request, address_id):
 
 
 def address_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+    
     client = get_object_or_404(Client, pk=client_id)
-    addresses = Address.objects.filter(client_id=client_id)
+    addresses = Address.objects.filter(client_id=client_id).order_by('-date_at_address')
+
+   
+
     return render(request, 'address_list.html', {'addresses': addresses, 'client_id': client_id})
 
 # end adddress
 
 def create_arvmedication(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = ARVMedicationForm(request.POST)
@@ -170,6 +203,9 @@ def create_arvmedication(request, client_id):
 
 
 def edit_arvmedication(request, arvmedication_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     arvmedication = get_object_or_404(ARVMedication, pk=arvmedication_id)
     client = arvmedication.client
     if request.method == 'POST':
@@ -184,6 +220,9 @@ def edit_arvmedication(request, arvmedication_id):
 
 
 def delete_arvmedication(request, arvmedication_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     arvmedication = get_object_or_404(ARVMedication, pk=arvmedication_id)
     client = arvmedication.client
     if request.method == 'POST':
@@ -203,6 +242,9 @@ def delete_arvmedication(request, arvmedication_id):
 
 
 def client_detail(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     addresses = Address.objects.filter(client_id=client_id)
     arvmedication = ARVMedication.objects.filter(client_id=client_id)
@@ -212,14 +254,20 @@ def client_detail(request, client_id):
 
 
 def arvmedication_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    arvmedications = ARVMedication.objects.filter(client_id=client_id)
+    arvmedications = ARVMedication.objects.filter(client_id=client_id).order_by('-report_date')
     return render(request, 'arvmedication_list.html', {'arvmedications': arvmedications, 'client_id': client_id})
 
 
 
 
 def create_cd4count(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = CD4CountForm(request.POST)
@@ -237,6 +285,10 @@ def create_cd4count(request, client_id):
 
 
 def edit_cd4(request, cd4count_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
+
     cd4count = get_object_or_404(CD4Count, pk=cd4count_id)
     client = cd4count.client
     if request.method == 'POST':
@@ -250,6 +302,9 @@ def edit_cd4(request, cd4count_id):
 
 
 def delete_cd4(request, cd4_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     cd4count = get_object_or_404(CD4Count, pk=cd4_id)
     client = cd4count.client
     if request.method == 'POST':
@@ -259,13 +314,19 @@ def delete_cd4(request, cd4_id):
 
 
 def cd4_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    cd4s = CD4Count.objects.filter(client_id=client_id)
+    cd4s = CD4Count.objects.filter(client_id=client_id).order_by('-test_date')
     return render(request, 'cd4_list.html', {'cd4s': cd4s, 'client_id': client_id})
 
 
 # ---- viral load  ----
 def create_viralload(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')  
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = ViralLoadForm(request.POST)
@@ -284,6 +345,9 @@ def create_viralload(request, client_id):
 
 
 def edit_viralload(request, viralload_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     viralload = get_object_or_404(ViralLoad, pk=viralload_id)
     client = viralload.client
     if request.method == 'POST':
@@ -300,6 +364,9 @@ def edit_viralload(request, viralload_id):
 
 
 def delete_viralload(request, viralload_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     viralload = get_object_or_404(ViralLoad, pk=viralload_id)
     client = viralload.client
     if request.method == 'POST':
@@ -308,8 +375,11 @@ def delete_viralload(request, viralload_id):
     return render(request, 'delete_viralload.html', {'viralload': viralload, 'client': client})
 
 def viralload_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    viralload = ViralLoad.objects.filter(client_id=client_id)
+    viralload = ViralLoad.objects.filter(client_id=client_id).order_by('-test_date')
     return render(request, 'viralload_list.html', {'viralload': viralload, 'client_id': client_id})
 
 # -- end viral load
@@ -317,6 +387,9 @@ def viralload_list(request, client_id):
 # ---- Physical exam
 
 def create_physicalexam(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = PhysicalExamForm(request.POST)
@@ -335,6 +408,9 @@ def create_physicalexam(request, client_id):
 
 
 def edit_physicalexam(request, physicalexam_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     physicalexam = get_object_or_404(PhysicalExam, pk=physicalexam_id)
     client = physicalexam.client
 
@@ -353,6 +429,9 @@ def edit_physicalexam(request, physicalexam_id):
 
 
 def delete_physicalexam(request, physicalexam_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     physicalexam = get_object_or_404(PhysicalExam, pk=physicalexam_id)
     client = physicalexam.client
     if request.method == 'POST':
@@ -362,8 +441,11 @@ def delete_physicalexam(request, physicalexam_id):
 
 
 def physicalexam_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    physicalexam = PhysicalExam.objects.filter(client_id=client_id)
+    physicalexam = PhysicalExam.objects.filter(client_id=client_id).order_by('-clinic_date')
     return render(request, 'physicalexam_list.html', {'physicalexam': physicalexam, 'client_id': client_id})
 
 # end Physical Exam
@@ -373,6 +455,9 @@ def physicalexam_list(request, client_id):
 
 # ---- prep status  ----
 def create_prepstatus(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = PrepStatusDetailForm(request.POST)
@@ -391,6 +476,9 @@ def create_prepstatus(request, client_id):
 
 
 def edit_prepstatus(request, prepstatus_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     prepstatus = get_object_or_404(PrepStatusDetail, pk=prepstatus_id)
     client = prepstatus.client
     if request.method == 'POST':
@@ -407,6 +495,9 @@ def edit_prepstatus(request, prepstatus_id):
 
 
 def delete_prepstatus(request, prepstatus_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     prepstatus = get_object_or_404(ViralLoad, pk=prepstatus_id)
     client = prepstatus.client
     if request.method == 'POST':
@@ -415,8 +506,11 @@ def delete_prepstatus(request, prepstatus_id):
     return render(request, 'delete_prepstatus.html', {'prepstatus': prepstatus, 'client': client})
 
 def prepstatus_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    prepstatus = PrepStatusDetail.objects.filter(client_id=client_id)
+    prepstatus = PrepStatusDetail.objects.filter(client_id=client_id).order_by('-status_date')
     return render(request, 'prepstatus_list.html', {'prepstatus': prepstatus, 'client_id': client_id})
 
 # -- end viral load
@@ -426,6 +520,9 @@ def prepstatus_list(request, client_id):
 
 # ---- social history  ----
 def create_social(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = SocialForm(request.POST)
@@ -444,6 +541,9 @@ def create_social(request, client_id):
 
 
 def edit_social(request, social_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     social = get_object_or_404(SocialHistory, pk=social_id)
     client = social.client
     if request.method == 'POST':
@@ -458,6 +558,9 @@ def edit_social(request, social_id):
 
 
 def delete_social(request, social_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     social = get_object_or_404(SocialHistory, pk=social_id)
     client = social.client
     if request.method == 'POST':
@@ -466,8 +569,11 @@ def delete_social(request, social_id):
     return render(request, 'delete_social.html', {'social': social, 'client': client})
 
 def social_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    social = SocialHistory.objects.filter(client_id=client_id)
+    social = SocialHistory.objects.filter(client_id=client_id).order_by('-date')
     return render(request, 'social_list.html', {'social': social, 'client_id': client_id})
 
 # -- end social
@@ -476,6 +582,9 @@ def social_list(request, client_id):
 
 # ---- social STI  ----
 def create_sti(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = STI_TestsDoneForm(request.POST)
@@ -491,13 +600,14 @@ def create_sti(request, client_id):
         form = STI_TestsDoneForm()
     return render(request, 'create_sti.html', {'form': form, 'client': client})
 
-
-
 def edit_sti(request, sti_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     sti = get_object_or_404(STI_TestsDone, pk=sti_id)
     client = sti.client
     if request.method == 'POST':
-        form = STI_TestsDoneForm(request.POST, instance=client)
+        form = STI_TestsDoneForm(request.POST, instance=sti)
         if form.is_valid():
             form.save()
             return render(request, 'close_window.html')
@@ -507,6 +617,9 @@ def edit_sti(request, sti_id):
 
 
 def delete_sti(request, sti_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     sti = get_object_or_404(STI_TestsDone, pk=sti_id)
     client = sti.client
     if request.method == 'POST':
@@ -515,8 +628,11 @@ def delete_sti(request, sti_id):
     return render(request, 'delete_sti.html', {'sti': sti, 'client': client})
 
 def sti_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    sti = STI_TestsDone.objects.filter(client_id=client_id)
+    sti = STI_TestsDone.objects.filter(client_id=client_id).order_by('-test_date')
     return render(request, 'sti_list.html', {'sti': sti, 'client_id': client_id})
 
 # -- end STI
@@ -526,6 +642,9 @@ def sti_list(request, client_id):
 
 # ----  Risk history ----
 def create_risk(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = RiskForm(request.POST)
@@ -544,6 +663,9 @@ def create_risk(request, client_id):
 
 
 def edit_risk(request, risk_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     risk = get_object_or_404(RiskHistory, pk=risk_id)
     client = risk.client
     if request.method == 'POST':
@@ -557,6 +679,9 @@ def edit_risk(request, risk_id):
 
 
 def delete_risk(request, risk_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     risk = get_object_or_404(RiskHistory, pk=risk_id)
     client = risk.client
     if request.method == 'POST':
@@ -565,8 +690,11 @@ def delete_risk(request, risk_id):
     return render(request, 'delete_risk.html', {'risk': risk, 'client': client})
 
 def risk_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    risk = RiskHistory.objects.filter(client_id=client_id)
+    risk = RiskHistory.objects.filter(client_id=client_id).order_by('-date')
     return render(request, 'risk_list.html', {'risk': risk, 'client_id': client_id})
 
 # -- end Risk
@@ -575,6 +703,9 @@ def risk_list(request, client_id):
 # ------ risk assessment
 
 def create_riskassessment(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = RiskAssessmentForm(request.POST)
@@ -594,6 +725,9 @@ def create_riskassessment(request, client_id):
 
 
 def edit_riskassessment(request, riskassessment_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     riskassessment = get_object_or_404(RiskAssessment, pk=riskassessment_id)
     client = riskassessment.client
     if request.method == 'POST':
@@ -612,6 +746,9 @@ def edit_riskassessment(request, riskassessment_id):
 
 
 def delete_riskassessment(request, riskassessment_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     riskassessment = get_object_or_404(RiskAssessment, pk=riskassessment_id)
     client = riskassessment.client
     if request.method == 'POST':
@@ -621,8 +758,11 @@ def delete_riskassessment(request, riskassessment_id):
 
 
 def riskassessment_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    riskassessment = RiskAssessment.objects.filter(client_id=client_id)
+    riskassessment = RiskAssessment.objects.filter(client_id=client_id).order_by('-assessment_date')
     return render(request, 'riskassessment_list.html', {'riskassessment': riskassessment, 'client_id': client_id})
 
 # ------ risk assessment
@@ -631,6 +771,9 @@ def riskassessment_list(request, client_id):
 #----- Prep eligibility
 
 def create_prepeligibility(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = PrepEligibilityForm(request.POST)
@@ -648,6 +791,9 @@ def create_prepeligibility(request, client_id):
 
 
 def edit_prepeligibility(request, prepeligibility_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     prepeligibility = get_object_or_404(PrepEligibility, pk=prepeligibility_id)
     client = prepeligibility.client
     if request.method == 'POST':
@@ -664,6 +810,9 @@ def edit_prepeligibility(request, prepeligibility_id):
 
 
 def delete_prepeligibility(request, prepeligibility_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     prepeligibility = get_object_or_404(PrepEligibility, pk=prepeligibility_id)
     client = prepeligibility.client
     if request.method == 'POST':
@@ -673,39 +822,59 @@ def delete_prepeligibility(request, prepeligibility_id):
 
 
 def prepeligibility_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    prepeligibility = PrepEligibility.objects.filter(client_id=client_id)
+    prepeligibility = PrepEligibility.objects.filter(client_id=client_id).order_by('-assessment_date')
     return render(request, 'prepeligibility_list.html', {'prepeligibility': prepeligibility, 'client_id': client_id})
 
 
 
-
+global GLOBAL_GENDER 
+GLOBAL_GENDER = None
 
 def create_sexualhistory(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+ 
     client = get_object_or_404(Client, pk=client_id)
+    
+    global GLOBAL_GENDER 
+    GLOBAL_GENDER = client.sex_at_birth.name
+    #print (request.session['facility'])
+    #print (request.session['User_id'])
     if request.method == 'POST':
         form = SexualHistoryForm(request.POST)
         if form.is_valid():
+            
+            #request.session['Sex'] = client.sex_at_birth.name
+            #print(request.session['Sex'])
             sexualhistory = form.save(commit=False)
-            sexualhistory.client = client
             sexualhistory.facility_id = request.session['facility']
             sexualhistory.created_by_id = request.session['User_id']
+            sexualhistory.client = client
             sexualhistory.save()
             return render(request, 'close_window.html')
 
             #return redirect('edit_client', client_id=client_id)
     else:
-        form = SexualHistoryForm()
-    return render(request, 'create_sexualhistory.html', {'form': form, 'client': client})
+        form = SexualHistoryForm(gender=GLOBAL_GENDER)
+        #form = SexualHistoryForm()
+    return render(request, 'create_sexualhistory.html', {'form': form, 'client': client })
 
 
 
 def edit_sexualhistory(request, sexualhistory_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     sexualhistory = get_object_or_404(SexualHistory, pk=sexualhistory_id)
     client = sexualhistory.client
     if request.method == 'POST':
         form = SexualHistoryForm(request.POST, instance=sexualhistory)
         if form.is_valid():
+            request.session['Sex'] = client.sex_at_birth.name
             sexualhistory = form.save(commit=False)
             sexualhistory.modified_by_id =  request.session['User_id']
             sexualhistory.modified_on =  datetime.now()
@@ -717,6 +886,9 @@ def edit_sexualhistory(request, sexualhistory_id):
 
 
 def delete_sexualhistory(request, sexualhistory_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     sexualhistory = get_object_or_404(SexualHistory, pk=sexualhistory_id)
     client = sexualhistory.client
     if request.method == 'POST':
@@ -726,13 +898,19 @@ def delete_sexualhistory(request, sexualhistory_id):
 
 
 def sexualhistory_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    sexualhistory = SexualHistory.objects.filter(client_id=client_id)
+    sexualhistory = SexualHistory.objects.filter(client_id=client_id).order_by('-interview_date')
     return render(request, 'sexualhistory_list.html', {'sexualhistory': sexualhistory, 'client_id': client_id})
 
 
 #New docket model
 def create_docketnew(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = DocketNewForm(request.POST)
@@ -751,13 +929,19 @@ def create_docketnew(request, client_id):
 
 
 def docketnew_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    docket = Docket_new.objects.filter(client_id=client_id)
+    docket = Docket_new.objects.filter(client_id=client_id).order_by('-date_created')
     return render(request, 'docket_list.html', {'docket': docket, 'client_id': client_id})
 
 
 
 def edit_docketnew(request, docket_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     docket = get_object_or_404(Docket_new, pk=docket_id)
     client = docket.client
 
@@ -777,6 +961,9 @@ def edit_docketnew(request, docket_id):
 
 
 def delete_docketnew(request, docket_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     docket = get_object_or_404(Docket_new, pk=docket_id)
     client = docket.client
     if request.method == 'POST':
@@ -789,6 +976,9 @@ def delete_docketnew(request, docket_id):
 
 #Out of care status model
 def create_outofcarestatus(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = OutOfCareStatusForm(request.POST)
@@ -807,13 +997,19 @@ def create_outofcarestatus(request, client_id):
 
 
 def outofcarestatus_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    oocs = OutOfCareStatus.objects.filter(client_id=client_id)
+    oocs = OutOfCareStatus.objects.filter(client_id=client_id).order_by('-status_date')
     return render(request, 'outofcarestatus_list.html', {'oocs': oocs, 'client_id': client_id})
 
 
 
 def edit_outofcarestatus(request, outofcarestatus_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     outofcarestatus = get_object_or_404(OutOfCareStatus, pk=outofcarestatus_id)
     client = outofcarestatus.client
 
@@ -832,6 +1028,9 @@ def edit_outofcarestatus(request, outofcarestatus_id):
 
 
 def delete_outofcarestatus(request, outofcarestatus_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     outofcarestatus = get_object_or_404(OutOfCareStatus, pk=outofcarestatus_id)
     client = outofcarestatus.client
     if request.method == 'POST':
@@ -844,6 +1043,9 @@ def delete_outofcarestatus(request, outofcarestatus_id):
 
 #Liver Function
 def create_liverkidney(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = Liver_Kidney_TestsForm(request.POST)
@@ -862,13 +1064,20 @@ def create_liverkidney(request, client_id):
 
 
 def liverkidney_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    liverkidney = Liver_Kidney_Tests.objects.filter(client_id=client_id)
+    liverkidney = Liver_Kidney_Tests.objects.filter(client_id=client_id).order_by('-test_date')
+
     return render(request, 'liverkidney_list.html', {'liverkidney': liverkidney, 'client_id': client_id})
 
 
 
 def edit_liverkidney(request, liverkidney_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     liverkidneytest = get_object_or_404(Liver_Kidney_Tests, pk=liverkidney_id)
     client = liverkidneytest.client
 
@@ -887,6 +1096,9 @@ def edit_liverkidney(request, liverkidney_id):
 
 
 def delete_liverkidney(request, liverkidney_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     liverkidneytest = get_object_or_404(Liver_Kidney_Tests, pk=liverkidney_id)
     client = liverkidneytest.client
     if request.method == 'POST':
@@ -900,6 +1112,9 @@ def delete_liverkidney(request, liverkidney_id):
 #start emergency contact
 
 def create_emergencycontact(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
     if request.method == 'POST':
         form = EmergencyContactForm(request.POST)
@@ -919,6 +1134,9 @@ def create_emergencycontact(request, client_id):
 
 
 def edit_emergencycontact(request, emergencycontact_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     emergencycontact = get_object_or_404(EmergencyContact, pk=emergencycontact_id)
     client = emergencycontact.client
     if request.method == 'POST':
@@ -935,6 +1153,9 @@ def edit_emergencycontact(request, emergencycontact_id):
 
 
 def delete_emergencycontact(request, emergencycontact_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     emergencycontact = get_object_or_404(EmergencyContact, pk=emergencycontact_id)
     client = emergencycontact.client
     if request.method == 'POST':
@@ -944,7 +1165,73 @@ def delete_emergencycontact(request, emergencycontact_id):
 
 
 def emergencycontact_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
     client = get_object_or_404(Client, pk=client_id)
-    emergencycontact = EmergencyContact.objects.filter(client_id=client_id)
+    emergencycontact = EmergencyContact.objects.filter(client_id=client_id).order_by('-date')
     return render(request, 'emergencycontact_list.html', {'emergencycontact': emergencycontact, 'client_id': client_id})
+
+#---------- hepatitis
+
+def create_hepatitis(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
+    client = get_object_or_404(Client, pk=client_id)
+    if request.method == 'POST':
+        form = HepatitisResultsForm(request.POST)
+        if form.is_valid():
+            hepatitis = form.save(commit=False)
+            hepatitis.client = client
+            hepatitis.facility_id = request.session['facility']
+            hepatitis.created_by_id = request.session['User_id']
+            hepatitis.save()
+            return render(request, 'close_window.html')
+
+            #return redirect('edit_client', client_id=client_id)
+    else:
+        form = HepatitisResultsForm()
+    return render(request, 'create_hepatitis.html', {'form': form, 'client': client})
+
+
+
+def edit_hepatitis(request, hepatitis_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
+    hepatitis = get_object_or_404(Hepatitis_Results, pk=hepatitis_id)
+    client = hepatitis.client
+    if request.method == 'POST':
+        form = HepatitisResultsForm(request.POST, instance=hepatitis)
+        if form.is_valid():
+            hepatitis = form.save(commit=False)
+            hepatitis.modified_by_id =  request.session['User_id']
+            hepatitis.modified_on =  datetime.now()
+            hepatitis.save()
+            return render(request, 'close_window.html')
+    else:
+        form = HepatitisResultsForm(instance=hepatitis)
+    return render(request, 'edit_hepatitis.html', {'form': form, 'hepatitis': hepatitis})
+
+
+def delete_hepatitis(request, hepatitis_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
+    hepatitis = get_object_or_404(Hepatitis_Results, pk=hepatitis_id)
+    client = hepatitis.client
+    if request.method == 'POST':
+        hepatitis.delete()
+        return redirect('edit_hepatitis', client_id=client.id)
+    return render(request, 'delete_hepatitis.html', {'hepatitis': hepatitis, 'client': client})
+
+
+def hepatitis_list(request, client_id):
+    if request.session.get('User') is None:
+        return redirect('login_user')
+
+    client = get_object_or_404(Client, pk=client_id)
+    hepatitis = Hepatitis_Results.objects.filter(client_id=client_id).order_by('-test_date')
+    return render(request, 'hepatitis_list.html', {'hepatitis': hepatitis, 'client_id': client_id})
 

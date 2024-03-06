@@ -24,6 +24,7 @@ from .views import (
     liverkidney_list, edit_liverkidney, create_liverkidney, delete_liverkidney,
     emergencycontact_list, edit_emergencycontact, create_emergencycontact, delete_emergencycontact,
 
+    hepatitis_list, edit_hepatitis, create_hepatitis, delete_hepatitis,
     reports1, 
 
 )
@@ -126,9 +127,13 @@ urlpatterns = [
 
     path('create/emergencycontact/<int:client_id>/', create_emergencycontact, name='create_emergencycontact'),
     path('edit/emergencycontact/<int:emergencycontact_id>/', edit_emergencycontact, name='edit_emergencycontact'),
-    path('delete/emergencycontact/<int:emergencycontacty_id>/', delete_emergencycontact, name='delete_emergencycontact'),
+    path('delete/emergencycontact/<int:emergencycontact_id>/', delete_emergencycontact, name='delete_emergencycontact'),
     path('emergencycontact_list/<int:client_id>/', emergencycontact_list, name='emergencycontact_list'),
 
+    path('create/hepatitis/<int:client_id>/', create_hepatitis, name='create_hepatitis'),
+    path('edit/hepatitis/<int:hepatitis_id>/', edit_hepatitis, name='edit_hepatitis'),
+    path('delete/hepatitis/<int:hepatitis_id>/', delete_hepatitis, name='delete_hepatitis'),
+    path('hepatitis_list/<int:client_id>/', hepatitis_list, name='hepatitis_list'),
 
     path('fetch_communities/', fetch_communities, name='fetch_communities'), 
 
