@@ -46,10 +46,10 @@
 <div class="col-md-4">  <button onclick="popup2({{ client.id }})">Add New</button>  </div>
 <ul>
   <b><div class="row h6">
-    <div class="col-md-2"> Date  </div>
+    <div class="col-md-2"> Interview Date  </div>
     <div class="col-md-3">   Last sexual encounter</div>
     <div class="col-md-2">  Previous PrEP use </div>
-    <div class="col-md-5">  </div>
+    <div class="col-md-5"> Notes </div>
   </div> </b>
 <hr>
 {% for sh in sexualhistory %}
@@ -57,9 +57,10 @@
     <div class="col-md-2">  {{ sh.interview_date }}</div>
     <div class="col-md-3">  {{ sh.last_sexual_encounter }}</div>
     <div class="col-md-2">  {{ sh.previous_prep_use }}</div>
+    <div class="col-md-4">  {{ sh.notes }}</div>
 
     <div class="col-md-1"> <button onclick="popup({{ sh.id }})">Edit</button>  </div>
-    <div class="col-md-4">  </div>
+ 
   </div> 
   <hr>
 {% empty %}

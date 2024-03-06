@@ -321,6 +321,7 @@
                       <button class="nav-link" id="nav-viralload-tab" data-bs-toggle="tab" data-bs-target="#nav-viralload" type="button" role="tab" aria-controls="nav-viralload" aria-selected="false"><a href="#" onclick="openViralloadList(event, {{ client.id }})">Viral Load</a></button>
                       <button class="nav-link " id="nav-sti-tab" data-bs-toggle="tab" data-bs-target="#nav-sti" type="button" role="tab" aria-controls="nav-sti" aria-selected="true"><a href="#" onclick="openSTIList(event, {{ client.id }})">STI</a></button>
                       <button class="nav-link " id="nav-liverkidney-tab" data-bs-toggle="tab" data-bs-target="#nav-liverkidney" type="button" role="tab" aria-controls="nav-liverkidney" aria-selected="true"><a href="#" onclick="openLiverKidneyList(event, {{ client.id }})">Liver/Kidney</a></button>
+                      <button class="nav-link " id="nav-hepatitis-tab" data-bs-toggle="tab" data-bs-target="#nav-hepatitis" type="button" role="tab" aria-controls="nav-hepatitis" aria-selected="true"><a href="#" onclick="openHepatitisList(event, {{ client.id }})">Hepatitis</a></button>
 
                       <!-- <button class="nav-link" id="nav-othertests-tab" data-bs-toggle="tab" data-bs-target="#nav-othertests" type="button" role="tab" aria-controls="nav-othertests" aria-selected="false"><a href="#" onclick="openOtherTestsList(event, {{ client.id }})">Other Tests</a></button> -->
                     </div>
@@ -352,6 +353,13 @@
                         </div>
                     </div>
                   </div>
+
+                  <div class="tab-pane fade" id="nav-hepatitis" role="tabpanel" aria-labelledby="nav-hepatitis-tab">
+                    <div id="lab-hepatitis">
+                      <div id="hepatitis-list-container">
+                      </div>
+                  </div>
+                </div>
 
                   </div>
 
@@ -388,7 +396,7 @@
             $("#demographics").removeClass("d-none");
             $("#reg-outofcare, #reg-sitedockets, #reg-transfer").addClass("d-none");
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").removeClass("d-none");
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").addClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").addClass("d-none");
             $("#med-arv, #med-othermeds").addClass("d-none");
             $("#pe-physicalexam").addClass("d-none");
             $("#pe-prepstatus").addClass("d-none");
@@ -405,7 +413,7 @@
             $("#laboratory").removeClass("d-none");
             $("#reg-outofcare, #reg-sitedockets, #reg-transfer").addClass("d-none");
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").addClass("d-none");
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").removeClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").removeClass("d-none");
             $("#med-arv, #med-othermeds").addClass("d-none");
             $("#pe-physicalexam").addClass("d-none");
             $("#pe-prepstatus").addClass("d-none");
@@ -419,7 +427,7 @@
         
           $("#show_medications").click(function() {
             $("#medications").removeClass("d-none");
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").addClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").addClass("d-none");
             $("#reg-outofcare, #reg-sitedockets, #reg-transfer").addClass("d-none");
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").addClass("d-none");
             $("#med-arv, #med-othermeds").removeClass("d-none");
@@ -439,7 +447,7 @@
             $("#pe-prepstatus").removeClass("d-none");
             $("#pe-sexualhistory").removeClass("d-none");
 
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").addClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").addClass("d-none");
             $("#reg-outofcare, #reg-sitedockets, #reg-transfer").addClass("d-none");
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").addClass("d-none");
             $("#med-arv, #med-othermeds").addClass("d-none");
@@ -451,7 +459,7 @@
 
           $("#show_physicalexam").click(function() {
             $("#physicalexam").removeClass("d-none");
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").addClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").addClass("d-none");
             $("#reg-outofcare, #reg-sitedockets, #reg-transfer").addClass("d-none");
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").addClass("d-none");
             $("#med-arv, #med-othermeds").addClass("d-none");
@@ -468,7 +476,7 @@
             $("#registration").removeClass("d-none");
 
             $("#demo-address, #demo-nok, #demo-risk, #demo-social").addClass("d-none");
-            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti").addClass("d-none");
+            $("#lab-cd4, #lab-viralload, #lab-othertests, #lab-sti, #lab-kidney, #lab-hepatitis").addClass("d-none");
             $("#med-arv, #med-othermeds").addClass("d-none");
             $("#pe-physicalexam").addClass("d-none");
             $("#physicalexam").addClass("d-none");
@@ -547,7 +555,22 @@ function openAddressList(event, clientId) {
   }
   </script>
 
-    
+  
+<script>
+  function openHepatitisList(event, clientId) {
+    event.preventDefault(); // Prevent the default link behavior
+  
+    // AJAX request to fetch the vl list content
+    $.ajax({
+      url: "/client/hepatitis_list/" + clientId + "/",
+      success: function(data) {
+        // Update the content of a specific section with the fetched data
+        $("#hepatitis-list-container").html(data);
+      }
+    });
+  }
+  </script>
+  
   <script>
     function openSocialList(event, clientId) {
       event.preventDefault(); // Prevent the default link behavior
