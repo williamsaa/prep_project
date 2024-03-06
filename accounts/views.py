@@ -12,7 +12,7 @@ def login_user(request):
         username = request.POST['username']
         password = request.POST['password']
         facility1 = request.POST['facility']
-
+        print(facility1)
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -37,4 +37,4 @@ def login_user(request):
             messages.success(request,'Username or password or site selected is incorrect')
             return redirect ('login_user')    
             
-    return render(request, 'authentication/login.html')
+    return render(request, 'authentication\login.html')
